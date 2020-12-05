@@ -1,0 +1,20 @@
+import { ConnectionOptions } from "typeorm";
+import { Shop } from './entities/Shop';
+import { Url } from './entities/Url';
+import { Product } from './entities/Product';
+import { PriceHistory } from './entities/PriceHistory';
+
+export const connectionOptions: ConnectionOptions = {
+    "type": "mysql",
+    "host": "localhost",
+    "port": 3306,
+    "username": "root",
+    "password": "****",
+    "database": "data",
+    "entities": [__dirname + "/entities/*{.js,.ts}"],
+    //"entities": [Shop, Url, Product, PriceHistory],
+    //"logging": "all",
+    //"logging": ["error"],
+    "logging": ["schema", "error", "warn", "info", "log"],
+    "synchronize": true
+}

@@ -1,0 +1,46 @@
+<mat-card class="content" *ngIf="shop">
+  <mat-card-content>
+    <h1>{{shop.name}}
+      <span class="muted right">#{{shop.id}}</span>
+    </h1>
+    <h2 i18n="@@Shop-Info-Title">Information</h2>
+    <mat-list>
+      <mat-list-item>
+        <span i18n="@@Shop-Info-Domain">Domain:</span>
+        <span class="value">{{shop.domain}}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span i18n="@@Shop-Info-SitemapUrl">Sitemap url:</span>
+        <span class="value">{{shop.sitemap}}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span i18n="@@Shop-Info-ShippingCost">Shipping cost:</span>
+        <span class="value">{{shop.shippingCost | number:'1.0-2'}} €</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span i18n="@@Shop-Info-ProductUpdInterval">Product update interval:</span>
+        <span class="value">{{shop.productUpdInterval | timespan}}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span i18n="@@Shop-Info-SitemapUpdInterval">Sitemap update interval:</span>
+        <span class="value">{{shop.sitemapUpdInterval | timespan}}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span i18n="@@Shop-Info-DateAdd">Creation date:</span>
+        <span class="value">{{shop.dateAdd | date:"dd/MM/yyyy hh:mm"}}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span i18n="@@Shop-Info-DateUpd">Last update:</span>
+        <span class="value">{{shop.dateUpd | date:"dd/MM/yyyy hh:mm"}}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span i18n="@@Shop-Info-DateNextUpd">Next update:</span>
+        <span class="value">{{shop.dateNextUpd | date:"dd/MM/yyyy hh:mm"}}</span>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button [routerLink]="['/shop']" i18n="@@Shop-Info-BackBtn">Back</button>
+    <button mat-button [routerLink]="['/shop',shop.id,'edit']" i18n="@@Shop-Info-ModifyBtn">Modify</button>
+  </mat-card-actions>
+</mat-card>

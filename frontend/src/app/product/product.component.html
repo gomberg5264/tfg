@@ -1,0 +1,151 @@
+<mat-sidenav-container class="product-container">
+  <mat-sidenav #productSidenav mode="side" align="start" [opened]="showFilters" class="product-sidenav" tabindex="-1">
+    <mat-accordion multi="true" class="product-filters">
+
+      <mat-expansion-panel class="filter-price" [expanded]="filter.price.active">
+        <mat-expansion-panel-header (click)="setFilter('price',!filter.price.active)">
+          <mat-panel-title i18n="@@Product-Filter-Price-Title">Price</mat-panel-title>
+          <mat-panel-description *ngIf="filter.price.active">
+            {{filter.price.data.min}} - {{filter.price.data.max}}€
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-form-field class="full-width">
+          <input matInput type="number" placeholder="From" i18n-placeholder="@@Product-Filter-Price-From" [(ngModel)]="filter.price.data.min"
+            (input)="updateFilter()">
+          <span matSuffix>€</span>
+        </mat-form-field>
+        <br />
+        <mat-form-field class="full-width">
+          <input matInput type="number" placeholder="To" i18n-placeholder="@@Product-Filter-Price-To" [(ngModel)]="filter.price.data.max"
+            (input)="updateFilter()">
+          <span matSuffix>€</span>
+        </mat-form-field>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel class="filter-rating no-padding" [expanded]="filter.rating.active">
+        <mat-expansion-panel-header (click)="setFilter('rating',!filter.rating.active)">
+          <mat-panel-title i18n="@@Product-Filter-Rating-Title">Rating</mat-panel-title>
+          <mat-panel-description *ngIf="filter.rating.active">
+            ≥ {{filter.rating.data | number:'1.1-1'}}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="slider-wrapper">
+          <mat-slider class="filter-slider" min="0" max="5" thumbLabel step="0.1" tickInterval="10" (change)="updateFilter()" [(ngModel)]="filter.rating.data"></mat-slider>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel class="filter-shop selection-list" [expanded]="filter.shop.active">
+        <mat-expansion-panel-header (click)="setFilter('shop',!filter.shop.active)">
+          <mat-panel-title i18n="@@Product-Filter-Shop-Title">Shop</mat-panel-title>
+          <mat-panel-description *ngIf="filter.shop.active">{{filterShops.selectedOptions.selected.length}}</mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-selection-list dense #filterShops>
+          <mat-list-option *ngFor="let shop of filter.shop.data" [value]="shop.id" (selectionChange)="updateFilter()">
+            <div class="inner-content">
+              <img src="http://www.google.com/s2/favicons?domain={{shop.domain}}" alt="Icon" width="16" height="16"> {{shop.name}}
+            </div>
+          </mat-list-option>
+        </mat-selection-list>
+        <mat-action-row>
+          <button mat-button class="center" color="primary" (click)="filterShops.deselectAll();updateFilter()" i18n="@@Product-Filter-SelectNoneBtn">Select None</button>
+          <button mat-button class="center" color="primary" (click)="filterShops.selectAll();updateFilter()" i18n="@@Product-Filter-SelectAllBtn">Select All</button>
+        </mat-action-row>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel class="filter-brand chip-list" [expanded]="filter.brand.active">
+        <mat-expansion-panel-header (click)="setFilter('brand',!filter.brand.active)">
+          <mat-panel-title i18n="@@Product-Filter-Brand-Title">Brand</mat-panel-title>
+          <mat-panel-description *ngIf="filter.brand.active">{{filter.brand.data.selected.length}}</mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-chip-list matPrefix #brandChipList>
+          <mat-chip *ngFor="let brand of filter.brand.data.selected" class="chip" selectable="false" removable="true" (removed)="filterBrandsRemove(brand)">
+            {{brand}}
+            <mat-icon matChipRemove>cancel</mat-icon>
+          </mat-chip>
+        </mat-chip-list>
+        <mat-form-field class="full-width">
+          <input matInput type="text" placeholder="Add brand" i18n-placeholder="@@Product-Filter-Brand-Add" aria-label="Brand" (keyup)="filterBrands($event.target.value)"
+            (keydown)="filterBrandsAdd($event)" [matAutocomplete]="brandResult">
+          <mat-autocomplete #brandResult="matAutocomplete">
+            <mat-option *ngFor="let option of filter.brand.data.filtered" [value]="option">
+              {{ option }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel class="filter-availability selection-list" [expanded]="filter.availability.active">
+        <mat-expansion-panel-header (click)="setFilter('availability',!filter.availability.active)">
+          <mat-panel-title i18n="@@Product-Filter-Availability-Title">Availability</mat-panel-title>
+          <mat-panel-description *ngIf="filter.availability.active">{{filterAvailability.selectedOptions.selected.length}}</mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-selection-list dense #filterAvailability>
+          <mat-list-option *ngFor="let availability of filter.availability.data | objectKeys" [value]="availability" [selected]="filter.availability.data[availability]"
+            (selectionChange)="updateFilter()">
+            <div class="inner-content">
+              {{availability}}
+            </div>
+          </mat-list-option>
+        </mat-selection-list>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel class="filter-language selection-list" [expanded]="filter.language.active">
+        <mat-expansion-panel-header (click)="setFilter('language',!filter.language.active)">
+          <mat-panel-title i18n="@@Product-Filter-Language-Title">Language</mat-panel-title>
+          <mat-panel-description *ngIf="filter.language.active">{{filterLanguage.selectedOptions.selected.length}}</mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-selection-list dense #filterLanguage>
+          <mat-list-option *ngFor="let language of filter.language.data | objectKeys" [value]="language" [selected]="filter.language.data[language]"
+            (selectionChange)="updateFilter()">
+            <div class="inner-content">
+              {{language}}
+            </div>
+          </mat-list-option>
+        </mat-selection-list>
+        <mat-action-row>
+          <button mat-button class="center" color="primary" (click)="filterLanguage.deselectAll();updateFilter()" i18n="@@Product-Filter-SelectNoneBtn">Select None</button>
+          <button mat-button class="center" color="primary" (click)="filterLanguage.selectAll();updateFilter()" i18n="@@Product-Filter-SelectAllBtn">Select All</button>
+        </mat-action-row>
+      </mat-expansion-panel>
+
+    </mat-accordion>
+  </mat-sidenav>
+
+  <mat-toolbar>
+    <mat-toolbar-row>
+      <button mat-button (click)="showFilters=!showFilters">
+        <mat-icon>filter_list</mat-icon>
+        <span i18n="@@Product-Toolbar-FilterBtn">Filters</span>
+      </button>
+      <span class="fill-remaining-space"></span>
+      <span i18n="@@Product-List-Title">Products</span>
+      <!--<span class="status muted">&nbsp; ({{indices?.start + 1}}-{{indices ? indices.end : 1}}
+        <ng-container i18n="@@Product-Toolbar-Status-Of">of</ng-container> {{items?.length}})
+      </span>-->
+      <span class="fill-remaining-space"></span>
+      <button mat-button [matMenuTriggerFor]="sortMenu">
+        <mat-icon>sort</mat-icon>
+        <span i18n="@@Product-Toolbar-SortBtn">Sort</span>
+      </button>
+      <mat-menu #sortMenu>
+        <!--<button mat-menu-item i18n="@@Product-Sort-NoSort">Without order</button>-->
+        <button mat-menu-item (click)="setSort('id','DESC')" i18n="@@Product-Sort-Newest">Newest</button>
+        <button mat-menu-item (click)="setSort('name','ASC')" i18n="@@Product-Sort-NameAZ">Name (A to Z)</button>
+        <button mat-menu-item (click)="setSort('name','DESC')"i18n="@@Product-Sort-NameZA">Name (Z to A)</button>
+        <button mat-menu-item (click)="setSort('price','ASC')"i18n="@@Product-Sort-PriceCheapest">Price (Cheapest first)</button>
+        <button mat-menu-item (click)="setSort('price','DESC')"i18n="@@Product-Sort-PriceExpensive">Price (Expensive first)</button>
+        <button mat-menu-item (click)="setSort('priceTotal','ASC')"i18n="@@Product-Sort-TotalPriceCheapest">Total Price (Cheaper first)</button>
+        <button mat-menu-item (click)="setSort('priceTotal','DESC')"i18n="@@Product-Sort-TotalPriceExpensive">Total Price (Expensive first)</button>
+        <button mat-menu-item (click)="setSort('ratingValue','DESC')"i18n="@@Product-Sort-Rating">Rating </button>
+        <button mat-menu-item (click)="setSort('ratingCount','DESC')"i18n="@@Product-Sort-Reviews">Most Reviews </button>
+      </mat-menu>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <virtual-scroll #productVirtualScroll [items]="items" (update)="scrollItems = $event" (end)="fetchMore($event)" [childWidth]="220"
+    [childHeight]="333">
+    <app-product-item *ngFor="let item of scrollItems" [item]="item"></app-product-item>
+    <!--<mat-progress-spinner *ngIf="loading" class="loader" color="primary" mode="indeterminate"></mat-progress-spinner>-->
+    <mat-progress-bar *ngIf="loading" class="loader" color="primary" mode="indeterminate"></mat-progress-bar>
+  </virtual-scroll>
+</mat-sidenav-container>
